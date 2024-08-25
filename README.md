@@ -32,11 +32,11 @@ To avoid unpredictable side effects child classes are meant only to change the b
 The module can be configured by calling `metamorph_config`. The following options are available
 
 | Option | Default | Notes |
-----------------------------
+|:-------|:--------|:------|
 | `strict` | True | Setting this to False bypasses all checks on the sanity of the code.
-| allow_mixed_typing | False | Allows child metamorph to use type hinting if not applied by the base. However changing or removing the hint still raises an error.
-| allow_init | False | Allows `__init__` or `__new__` to be defined in the child classes
-| private_members | False | Normally members starting with __ are shared between the base and its children. Setting this option to true makes these variables only accessible from the base class.
+| `allow_mixed_typing` | False | Allows child metamorph to use type hinting if not applied by the base. However changing or removing the hint still raises an error.
+| `allow_init` | False | Allows `__init__` or `__new__` to be defined in the child classes
+| `private_members` | False | Normally members starting with __ are shared between the base and its children. Setting this option to true makes these variables only accessible from the base class.
 
 ## API
 
