@@ -1,34 +1,33 @@
 from dataclasses import dataclass
-from importlib import import_module
 from inspect import getmembers, isfunction, Parameter, signature, Signature
 import re
-from types import MethodType, new_class
-from typing import Any, Callable, MutableMapping
+from typing import Callable
 
 @dataclass
-class MetamorphError(BaseException) :
+class MetamorphismError(BaseException) :
     message: str
 
 @dataclass
-class MetamorphException(Exception) :
+class MetamorphismException(Exception) :
     message: str
 
 @dataclass
-class _MetamorphConfig :
+class _MetamorphismConfig :
     strict: bool = True
     allow_mixed_typing: bool = False
     allow_init: bool = False
     private_members: bool = False
 
-_config = _MetamorphConfig()
+_config = _MetamorphismConfig()
 
-def metamorph_config(    
+def metamorphism_config(    
     strict: bool = True,
     allow_mixed_typing: bool = False,
     allow_init: bool = False,
     private_members: bool = False
 ) :
-    _config = _MetamorphConfig(strict, 
+    global _config
+    _config = _MetamorphismConfig(strict, 
                                allow_mixed_typing, 
                                allow_init, 
                                private_members)
@@ -50,7 +49,7 @@ class Metamorphic(metaclass=MetamorphicType) :
     def __getattribute__(self, attrname) :
         getAttribute = lambda name : super(Metamorphic, self).__getattribute__(name)
 
-        if _config.private_members or not re.match("_\w+?_\w+$") :
+        if _config.private_members or not re.match(r"_\w+?__\w+$", attrname) :
             return getAttribute(attrname)
         
         classname = getAttribute("__class__").__name__
@@ -79,15 +78,15 @@ def isMetamorphicChild(obj_or_cls) :
 def _checkMetamorphChild(cls, bases) :
     if _config.strict :
         if len(bases) > 1 :
-            raise MetamorphError("Metamorph child cannot have any other base classes")
+            raise MetamorphismError("Metamorph child cannot have any other base classes")
         
         if Metamorphic not in bases[0].__bases__ :
-            raise MetamorphError("Cannot subclass a metamorph child")
+            raise MetamorphismError("Cannot subclass a metamorph child")
         
         base = bases[0]
 
         if "__annotations__" in cls.__dict__:
-            raise MetamorphError("Metamorph class cannot contain annotations")
+            raise MetamorphismError("Metamorph class cannot contain annotations")
 
         for name, attr in getmembers(cls, lambda f : isfunction(f)) :
             if name in vars(cls):
@@ -115,12 +114,12 @@ def _signaturesMatch(a: Callable, b: Callable, loose: bool = False) -> bool :
     return all(tests)
 
 def _checkFunction(func, target) :
-    createException = lambda err : MetamorphError(
+    createException = lambda err : MetamorphismError(
         f"The function {func.__qualname__} {err} of {target.__name__}"
     )
 
     if not _config.allow_init and func.__name__ in ["__init__", "__new__"] :
-        raise MetamorphError(f"The function {func.__name__} is not allowed in metamorph class (Set allow_init to True to prevent this error)") 
+        raise MetamorphismError(f"The function {func.__name__} is not allowed in metamorph class (Set allow_init to True to prevent this error)") 
     
     if func.__name__ not in dir(target) :
         raise createException("is not a member")
@@ -134,12 +133,12 @@ def _checkFunction(func, target) :
 
 def morph(obj, morphclass) :
     if not isMetamorphic(obj) :
-        raise MetamorphException("Object is not metamorphic")
+        raise MetamorphismException("Object is not metamorphic")
     
     if not isMetamorphic(morphclass) :
-        raise MetamorphException("Morph is not metamorphic")
+        raise MetamorphismException("Morph is not metamorphic")
     
     if morphclass.__metamorph_of__ != obj.__metamorph_of__ :
-        raise MetamorphException("Object and morph do not belong to the same morphic")
+        raise MetamorphismException("Object and morph do not belong to the same morphic")
     
     obj.__class__ = morphclass

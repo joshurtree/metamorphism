@@ -1,6 +1,5 @@
 import unittest
-from metamorph import *
-
+from metamorism import *
 
 class StrictBase(Metamorphic) :
     def __init__(self) -> None:
@@ -16,6 +15,9 @@ class StrictBase(Metamorphic) :
         pass
 
 class StrictTest(unittest.TestCase) :    
+    def setUp(self) -> None:
+        metamorphism_config()
+        return super().setUp()
     def test_positive(self) :   
         class WorkingMorph(StrictBase) :
             def greet(self = None) :
@@ -44,7 +46,7 @@ class StrictTest(unittest.TestCase) :
                 def geeet(self) :
                     print("Too many e's")
                 
-        self.assertRaises(MetamorphError, typo_test)
+        self.assertRaises(MetamorphismError, typo_test)
 
     def test_param_types(self) :
         def param_swap() :
@@ -52,22 +54,22 @@ class StrictTest(unittest.TestCase) :
                 def paramTest(self, b, a) :
                     return True
                     
-        self.assertRaises(MetamorphError, param_swap)
+        self.assertRaises(MetamorphismError, param_swap)
 
-class LooseBase(Metamorphic, strict=False) :
+class LooseBase(Metamorphic) :
     pass
 
 class LooseTest(unittest.TestCase) :
+    def setUp(self) -> None:
+        metamorphism_config(False)
+        return super().setUp()
+    
     def test_loose(self) :
         class SloppyMorph(LooseBase) :
             def greet(self) :
                 return "Hello, World"
 
-class LooseParamsBase(Metamorphic, allow_mixed_typing=True) :
-    def __new__(cls, *args, **kargs) :
-        obj = super(LooseParamsBase, cls).__new__(cls, *args, **kargs)
-        return obj 
-    
+class LooseParamsBase(Metamorphic) :
     def greet(self) :
         return "Hello, World!"
     
@@ -75,6 +77,10 @@ class LooseParamsBase(Metamorphic, allow_mixed_typing=True) :
         return False 
 
 class LooseParamsTest(unittest.TestCase) :
+    def setUp(self) -> None:
+        metamorphism_config(True, True)
+        return super().setUp()
+    
     def test_param_types(self) :
         class LooseParamsMorph(LooseParamsBase) :
             def paramTest(self, a: str, b: str) :

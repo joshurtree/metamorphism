@@ -1,4 +1,4 @@
-# Metamorph
+# Metamorphism
 Implements metamorphism for Python classes using decorators
 
 ## Aim
@@ -23,13 +23,12 @@ print(greeter.greet()) # prints Hello, Earth!
 ```
 
 ## Constraints
-By default the module enforces a number of constraints on metamorph children. It throws exception when the class is created. This is designed to prevent unexpected behavior during runtime. These can be partially or wholly ignored using `metamorph_config`. (See below)
+By default the module enforces a number of constraints on metamorph children. It throws exception when the class is created. This is designed to prevent unexpected behavior during runtime. These can be partially or wholly ignored using `metamorphism_config`. (See below)
 
-
-To avoid unpredictable side effects child classes are meant only to change the behavior of an object without containing local state. Thus they can only implement methods that already exist in the metamorph base and function signatures must match. Implementing `__init__` or `__new__` or any attributes also throws an exception In addition child classes can only inherit directly from the base class and it multiple inheritance is forbidden. The base class is still allowed to use multiple inheritance.
+To avoid unpredictable side effects by default child classes are only allowed to change the behavior of an object. They cannot maintain their own state. Thus they can only implement methods that already exist in the metamorph base and function signatures must match. Implementing `__init__` or `__new__` or any attributes also throws an exception. In addition child classes can only inherit directly from the base class and multiple inheritance is forbidden. The base class is still allowed to use multiple inheritance.
 
 ## Configuration
-The module can be configured by calling `metamorph_config`. The following options are available
+The module can be configured by calling `metamorphism_config`. It has to be called before any classes are defined. Therefore it should be placed near the top of the file and not within a function. The following options are available
 
 | Option | Default | Notes |
 |:-------|:--------|:------|
@@ -40,10 +39,12 @@ The module can be configured by calling `metamorph_config`. The following option
 
 ## API
 
-* Metamorphic - The base class for metamorphic classes
-* metamorph_config(strict, allow_mixed_types, allow_init, private_members) - Used to configure the module
-* morph(obj, morphclass) - Morphs obj to the given morphclass
-* isMetamorphic(obj_or_cls) - Returns if class or object instance are metamorphic
-* isMetamorphicBase(obj_or_cls) - Returns if class or object instance is a metamorphic base class
-* isMetamorphicChild(obj_or_cls) - Returns if class or object instance is a metamorphic child class
-* MetamorphicType - The metaclass for metamorphic classes. You should not need to use it directly. Inherit from the Metamorphic class instead. 
+* `Metamorphic` - The base class for metamorphic classes.
+* `metamorphism_config(strict, allow_mixed_types, allow_init, private_members)` - Used to configure the module.
+* `morph(obj, morphclass)` - Morphs obj to the given morphclass.
+* `isMetamorphic(obj_or_cls)` - Returns if class or object instance are metamorphic.
+* `isMetamorphicBase(obj_or_cls)` - Returns if class or object instance is a metamorphic base class.
+* `isMetamorphicChild(obj_or_cls)` - Returns if class or object instance is a metamorphic child class.
+* `MetamorphismError` - Raised if there is a problem with the definition of the classes.
+* `MetamorphismException` - Raised if `morph` is used incorrectly.
+* `MetamorphicType` - The metaclass for metamorphic classes. You should not need to use it directly. Inherit from the Metamorphic class instead. 
