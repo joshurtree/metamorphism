@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="metamorphism",
-    version="0.0.11",
+    version="0.1.0",
     description="Implements metamorphic classes for Python",
     packages=find_packages(where="."),
     long_description=long_description,
@@ -23,5 +23,5 @@ setup(
     extra_requrie={
         "dev": ["twine>=5.1.1"]
     },
-    python_requires=">=3.6"
+    python_requires=">=3.7"
 )

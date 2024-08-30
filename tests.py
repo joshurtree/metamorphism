@@ -15,9 +15,6 @@ class StrictBase(Metamorphic) :
         pass
 
 class StrictTest(unittest.TestCase) :    
-    def setUp(self) -> None:
-        metamorphism_config()
-        return super().setUp()
     def test_positive(self) :   
         class WorkingMorph(StrictBase) :
             def greet(self = None) :
@@ -56,20 +53,19 @@ class StrictTest(unittest.TestCase) :
                     
         self.assertRaises(MetamorphismError, param_swap)
 
-class LooseBase(Metamorphic) :
+class Loose(MetamorphismBase, metaclass=CustomMetamorphic, strict=False) :
+    pass
+
+class LooseBase(Loose) :
     pass
 
 class LooseTest(unittest.TestCase) :
-    def setUp(self) -> None:
-        metamorphism_config(False)
-        return super().setUp()
-    
     def test_loose(self) :
         class SloppyMorph(LooseBase) :
             def greet(self) :
                 return "Hello, World"
 
-class LooseParamsBase(Metamorphic) :
+class LooseParamsBase(Metamorphic, metaclass=CustomMetamorphic, allow_mixed_typing=True) :
     def greet(self) :
         return "Hello, World!"
     
@@ -77,10 +73,6 @@ class LooseParamsBase(Metamorphic) :
         return False 
 
 class LooseParamsTest(unittest.TestCase) :
-    def setUp(self) -> None:
-        metamorphism_config(True, True)
-        return super().setUp()
-    
     def test_param_types(self) :
         class LooseParamsMorph(LooseParamsBase) :
             def paramTest(self, a: str, b: str) :
