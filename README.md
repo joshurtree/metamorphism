@@ -1,8 +1,5 @@
 # Metamorphism
-Implements metamorphism for Python classes using decorators
-
-## Aim
-Metamorphic classes are similar to polymorphic classes except that the sub-class is applied to an already existing object. 
+Implements metamorphism for Python classes. Metamorphic classes are similar to polymorphic classes except that the sub-class is applied to an already existing object. 
 
 ## Example usage
 ```python
